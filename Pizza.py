@@ -54,17 +54,28 @@ def cli():
 @cli.command()
 @click.option('--delivery', default=False, is_flag=True)
 @click.argument('pizza', nargs=1)
-def order(pizza: str, delivery: bool):
+@click.argument('size', default='xl', nargs=1)
+def order(pizza: str, size: str, delivery: bool):
     """Готовит и доставляет пиццу"""
-    for child in Pizza.__subclasses__():
-        if child.__name__.lower() == pizza.lower():
-            pizza_instance = child()
-            bake(pizza_instance)
-            if delivery:
-                deliver(pizza_instance)
-            else:
-                pickup(pizza_instance)
-            break
+
+    childs_dict = dict(zip(list(map(lambda x: x.__name__.lower(), Pizza.__subclasses__())),
+                           Pizza.__subclasses__()))
+    try:
+        child_class = childs_dict[pizza.lower()]
+    except KeyError:
+        print('No such pizza!')
+        return
+
+    if size == 'l':
+        pizza_instance = child_class(PizzaSize.l)
+    else:
+        pizza_instance = child_class()
+
+    bake(pizza_instance)
+    if delivery:
+        deliver(pizza_instance)
+    else:
+        pickup(pizza_instance)
 
 
 @cli.command()

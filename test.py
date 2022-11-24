@@ -57,3 +57,12 @@ def test_command_order_pickup():
     assert result.exit_code == 0
     assert result.output == 'bake - 50 c!\n'\
                             '🏠 Забрали за 5с!\n'
+
+
+def test_command_order_pickup_large():
+    runner = CliRunner()
+    random.seed(5)
+    result = runner.invoke(cli, ['order', 'pepperoni', 'l'])
+    assert result.exit_code == 0
+    assert result.output == 'bake - 30 c!\n'\
+                            '🏠 Забрали за 5с!\n'
